@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>news / IEEE</title>
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #0b0b0d;
+    color: #e8e8e8;
+    padding: 3rem 1.5rem 5rem;
+  }
+  main { max-width: 760px; margin: 0 auto; }
+  a.back { color: #777; text-decoration: none; font-size: 0.85rem; }
+  a.back:hover { color: #aaa; }
+  h1 { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.02em; margin: 0.75rem 0 0.25rem; }
+  p.sub { color: #888; margin-top: 0; margin-bottom: 2rem; }
+
+  nav.branches { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem; }
+  nav.branches button {
+    background: #131315;
+    border: 1px solid #232323;
+    color: #ccc;
+    padding: 0.4rem 0.85rem;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+  }
+  nav.branches button:hover { border-color: #3a3a3a; }
+  nav.branches button.active { background: #e8e8e8; color: #0b0b0d; border-color: #e8e8e8; }
+
+  ul#feed { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.75rem; }
+  ul#feed li a {
+    display: block;
+    padding: 1rem 1.25rem;
+    border: 1px solid #232323;
+    border-radius: 10px;
+    color: #e8e8e8;
+    text-decoration: none;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  ul#feed li a:hover { border-color: #3a3a3a; background: #131315; }
+  ul#feed li .title { font-size: 0.95rem; }
+  ul#feed li .meta { display: block; color: #888; font-size: 0.78rem; margin-top: 0.35rem; }
+
+  p#status { color: #888; font-size: 0.85rem; }
+  footer { margin-top: 3rem; color: #555; font-size: 0.8rem; }
+  footer a { color: #777; }
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="../../">&larr; sites</a>
+  <h1>news</h1>
+  <p class="sub">Latest from IEEE Spectrum, by branch.</p>
+
+  <nav class="branches" id="branches"></nav>
+  <p id="status">Loading&hellip;</p>
+  <ul id="feed"></ul>
+
+  <footer>Source: <a href="https://spectrum.ieee.org/" target="_blank" rel="noopener">IEEE Spectrum</a></footer>
+</main>
+
+<script>
+  const BRANCHES = [
+    { label: "All",        feed: "https://spectrum.ieee.org/rss/fulltext" },
+    { label: "AI",         feed: "https://spectrum.ieee.org/rss/artificial-intelligence/fulltext" },
+    { label: "Computing",  feed: "https://spectrum.ieee.org/rss/computing/fulltext" },
+    { label: "Robotics",   feed: "https://spectrum.ieee.org/rss/robotics/fulltext" },
+    { label: "Energy",     feed: "https://spectrum.ieee.org/rss/energy/fulltext" },
+    { label: "Aerospace",  feed: "https://spectrum.ieee.org/rss/aerospace/fulltext" },
+    { label: "Semiconductors", feed: "https://spectrum.ieee.org/rss/semiconductors/fulltext" },
+  ];
+
+  const branchesEl = document.getElementById("branches");
+  const feedEl = document.getElementById("feed");
+  const statusEl = document.getElementById("status");
+
+  BRANCHES.forEach((b, i) => {
+    const btn = document.createElement("button");
+    btn.textContent = b.label;
+    if (i === 0) btn.classList.add("active");
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("nav.branches button").forEach(x => x.classList.remove("active"));
+      btn.classList.add("active");
+      loadFeed(b.feed);
+    });
+    branchesEl.appendChild(btn);
+  });
+
+  async function loadFeed(feedUrl) {
+    statusEl.textContent = "Loading…";
+    statusEl.style.display = "block";
+    feedEl.innerHTML = "";
+    try {
+      const api = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(feedUrl);
+      const res = await fetch(api);
+      const data = await res.json();
+      if (data.status !== "ok" || !data.items || !data.items.length) {
+        throw new Error("empty feed");
+      }
+      statusEl.style.display = "none";
+      data.items.slice(0, 20).forEach(item => {
+        const li = document.createElement("li");
+        const a = document.createElement("a");
+        a.href = item.link;
+        a.target = "_blank";
+        a.rel = "noopener";
+        const date = new Date(item.pubDate).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+        a.innerHTML = '<span class="title">' + item.title + '</span><span class="meta">' + date + '</span>';
+        li.appendChild(a);
+        feedEl.appendChild(li);
+      });
+    } catch (e) {
+      statusEl.textContent = "Couldn't load this feed right now.";
+      statusEl.style.display = "block";
+    }
+  }
+
+  loadFeed(BRANCHES[0].feed);
+</script>
+</body>
+</html>
