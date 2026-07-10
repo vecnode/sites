@@ -87,62 +87,74 @@
 <main>
   <a class="back" href="../../">&larr; sites</a>
   <h1>news</h1>
-  <p class="sub">Latest from IEEE Spectrum, by branch.</p>
+  <p class="sub">Latest from IEEE Spectrum and Springer Link, by topic.</p>
 
   <nav class="branches" id="branches"></nav>
   <p id="status">Loading&hellip;</p>
   <ul id="feed"></ul>
 
-  <footer>Source: <a href="https://spectrum.ieee.org/" target="_blank" rel="noopener">IEEE Spectrum</a></footer>
+  <footer>
+    Sources:
+    <a href="https://spectrum.ieee.org/" target="_blank" rel="noopener">IEEE Spectrum</a>
+    &middot;
+    <a href="https://link.springer.com/" target="_blank" rel="noopener">Springer Link</a>
+  </footer>
 </main>
 
+<script src="../../assets/feeds.js"></script>
 <script>
-  const BRANCHES = [
-    { label: "All",        feed: "https://spectrum.ieee.org/rss/fulltext" },
-    { label: "AI",         feed: "https://spectrum.ieee.org/rss/artificial-intelligence/fulltext" },
-    { label: "Computing",  feed: "https://spectrum.ieee.org/rss/computing/fulltext" },
-    { label: "Robotics",   feed: "https://spectrum.ieee.org/rss/robotics/fulltext" },
-    { label: "Energy",     feed: "https://spectrum.ieee.org/rss/energy/fulltext" },
-    { label: "Aerospace",  feed: "https://spectrum.ieee.org/rss/aerospace/fulltext" },
-    { label: "Semiconductors", feed: "https://spectrum.ieee.org/rss/semiconductors/fulltext" },
+  const springerFeed = (discipline) =>
+    "https://link.springer.com/search.rss?query=&facet-discipline=%22" + encodeURIComponent(discipline) + "%22";
+
+  const TOPICS = [
+    { label: "All",             source: "IEEE Spectrum", feed: "https://spectrum.ieee.org/rss/fulltext" },
+    { label: "AI",               source: "IEEE Spectrum", feed: "https://spectrum.ieee.org/rss/artificial-intelligence/fulltext" },
+    { label: "Computing",        source: "IEEE Spectrum", feed: "https://spectrum.ieee.org/rss/computing/fulltext" },
+    { label: "Robotics",         source: "IEEE Spectrum", feed: "https://spectrum.ieee.org/rss/robotics/fulltext" },
+    { label: "Energy",           source: "IEEE Spectrum", feed: "https://spectrum.ieee.org/rss/energy/fulltext" },
+    { label: "Aerospace",        source: "IEEE Spectrum", feed: "https://spectrum.ieee.org/rss/aerospace/fulltext" },
+    { label: "Semiconductors",   source: "IEEE Spectrum", feed: "https://spectrum.ieee.org/rss/semiconductors/fulltext" },
+    { label: "Biological Sciences", source: "Springer Link", feed: springerFeed("Life Sciences"), mode: "reader" },
+    { label: "Mathematics",      source: "Springer Link", feed: springerFeed("Mathematics"), mode: "reader" },
+    { label: "Statistics",       source: "Springer Link", feed: springerFeed("Statistics"), mode: "reader" },
   ];
 
   const branchesEl = document.getElementById("branches");
   const feedEl = document.getElementById("feed");
   const statusEl = document.getElementById("status");
 
-  BRANCHES.forEach((b, i) => {
+  TOPICS.forEach((t, i) => {
     const btn = document.createElement("button");
-    btn.textContent = b.label;
+    btn.textContent = t.label;
     if (i === 0) btn.classList.add("active");
     btn.addEventListener("click", () => {
       document.querySelectorAll("nav.branches button").forEach(x => x.classList.remove("active"));
       btn.classList.add("active");
-      loadFeed(b.feed);
+      loadTopic(t);
     });
     branchesEl.appendChild(btn);
   });
 
-  async function loadFeed(feedUrl) {
+  async function loadTopic(topic) {
     statusEl.textContent = "Loading…";
     statusEl.style.display = "block";
     feedEl.innerHTML = "";
     try {
-      const api = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(feedUrl);
-      const res = await fetch(api);
-      const data = await res.json();
-      if (data.status !== "ok" || !data.items || !data.items.length) {
-        throw new Error("empty feed");
-      }
+      const items = await fetchFeed(topic.feed, 20, topic.mode || "xml");
+      if (!items.length) throw new Error("empty feed");
       statusEl.style.display = "none";
-      data.items.slice(0, 20).forEach(item => {
+      items.forEach(item => {
         const li = document.createElement("li");
         const a = document.createElement("a");
         a.href = item.link;
         a.target = "_blank";
         a.rel = "noopener";
-        const date = new Date(item.pubDate).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
-        a.innerHTML = '<span class="title">' + item.title + '</span><span class="meta">' + date + '</span>';
+        const date = item.pubDate
+          ? new Date(item.pubDate).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })
+          : "";
+        a.innerHTML =
+          '<span class="title">' + item.title + '</span>' +
+          '<span class="meta">' + topic.source + (date ? " · " + date : "") + '</span>';
         li.appendChild(a);
         feedEl.appendChild(li);
       });
@@ -152,7 +164,7 @@
     }
   }
 
-  loadFeed(BRANCHES[0].feed);
+  loadTopic(TOPICS[0]);
 </script>
 <script src="../../assets/theme.js"></script>
 </body>
