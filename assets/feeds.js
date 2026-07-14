@@ -19,8 +19,13 @@ async function fetchFeedXml(feedUrl, limit) {
       node.querySelector("pubDate")?.textContent ||
       node.querySelector("updated")?.textContent ||
       node.querySelector("published")?.textContent ||
+      node.querySelector("date")?.textContent ||
       "";
-    return { title, link, pubDate };
+    const creators = Array.from(node.querySelectorAll("creator")).map(n => n.textContent.trim());
+    const author = creators.length
+      ? creators.filter(Boolean).join(", ")
+      : (node.querySelector("author > name")?.textContent || node.querySelector("author")?.textContent || "").trim();
+    return { title, link, pubDate, author };
   });
 }
 

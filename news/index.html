@@ -32,6 +32,21 @@
   h1 { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.02em; margin: 0.75rem 0 0.25rem; }
   p.sub { color: var(--muted); margin-top: 0; margin-bottom: 2rem; }
 
+  nav.sources { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem; }
+  nav.sources button {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 0.45rem 0.9rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+  }
+  nav.sources button:hover { border-color: var(--border-hover); color: var(--fg); }
+  nav.sources button.active { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+
   nav.branches { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem; }
   nav.branches button {
     background: var(--hover-bg);
@@ -88,8 +103,9 @@
 <main>
   <a class="back" href="../">&larr; sites</a>
   <h1>news</h1>
-  <p class="sub">Latest from IEEE Spectrum and Springer Link, by topic.</p>
+  <p class="sub">Latest from IEEE Spectrum, Springer Link, and Nature, by source and topic.</p>
 
+  <nav class="sources" id="sources"></nav>
   <nav class="branches" id="branches"></nav>
   <p id="status">Loading&hellip;</p>
   <ul id="feed"></ul>
@@ -99,6 +115,8 @@
     <a href="https://spectrum.ieee.org/" target="_blank" rel="noopener">IEEE Spectrum</a>
     &middot;
     <a href="https://link.springer.com/" target="_blank" rel="noopener">Springer Link</a>
+    &middot;
+    <a href="https://www.nature.com/news" target="_blank" rel="noopener">Nature</a>
   </footer>
 </main>
 
@@ -106,37 +124,73 @@
 <script>
   const springerFeed = (discipline) =>
     "https://link.springer.com/search.rss?query=&facet-discipline=%22" + encodeURIComponent(discipline) + "%22";
+  const natureFeed = (slug) => "https://www.nature.com/subjects/" + slug + ".rss";
 
-  const TOPICS = [
-    { label: "All",             source: "IEEE Spectrum", feed: "https://spectrum.ieee.org/rss/fulltext" },
-    { label: "AI",               source: "IEEE Spectrum", feed: "https://spectrum.ieee.org/rss/artificial-intelligence/fulltext" },
-    { label: "Computing",        source: "IEEE Spectrum", feed: "https://spectrum.ieee.org/rss/computing/fulltext" },
-    { label: "Robotics",         source: "IEEE Spectrum", feed: "https://spectrum.ieee.org/rss/robotics/fulltext" },
-    { label: "Energy",           source: "IEEE Spectrum", feed: "https://spectrum.ieee.org/rss/energy/fulltext" },
-    { label: "Aerospace",        source: "IEEE Spectrum", feed: "https://spectrum.ieee.org/rss/aerospace/fulltext" },
-    { label: "Semiconductors",   source: "IEEE Spectrum", feed: "https://spectrum.ieee.org/rss/semiconductors/fulltext" },
-    { label: "Biological Sciences", source: "Springer Link", feed: springerFeed("Life Sciences"), mode: "reader" },
-    { label: "Mathematics",      source: "Springer Link", feed: springerFeed("Mathematics"), mode: "reader" },
-    { label: "Statistics",       source: "Springer Link", feed: springerFeed("Statistics"), mode: "reader" },
-  ];
+  const SOURCES = {
+    "IEEE Spectrum": [
+      { label: "All",           feed: "https://spectrum.ieee.org/rss/fulltext" },
+      { label: "AI",            feed: "https://spectrum.ieee.org/rss/artificial-intelligence/fulltext" },
+      { label: "Computing",     feed: "https://spectrum.ieee.org/rss/computing/fulltext" },
+      { label: "Robotics",      feed: "https://spectrum.ieee.org/rss/robotics/fulltext" },
+      { label: "Energy",        feed: "https://spectrum.ieee.org/rss/energy/fulltext" },
+      { label: "Aerospace",     feed: "https://spectrum.ieee.org/rss/aerospace/fulltext" },
+      { label: "Semiconductors", feed: "https://spectrum.ieee.org/rss/semiconductors/fulltext" },
+    ],
+    "Springer Link": [
+      { label: "All",                 feed: "https://link.springer.com/search.rss?query=&facet-content-type=%22Article%22", mode: "reader" },
+      { label: "Biological Sciences", feed: springerFeed("Life Sciences"), mode: "reader" },
+      { label: "Mathematics",         feed: springerFeed("Mathematics"), mode: "reader" },
+      { label: "Statistics",          feed: springerFeed("Statistics"), mode: "reader" },
+    ],
+    "Nature": [
+      { label: "All",            feed: "https://www.nature.com/nature.rss" },
+      { label: "AI",             feed: natureFeed("machine-learning") },
+      { label: "Computer Science", feed: natureFeed("computer-science") },
+      { label: "Engineering",    feed: natureFeed("engineering") },
+      { label: "Energy",         feed: natureFeed("energy-science-and-technology") },
+      { label: "Genetics",       feed: natureFeed("genetics") },
+      { label: "Climate",        feed: natureFeed("climate-sciences") },
+      { label: "Quantum Info",   feed: natureFeed("quantum-information") },
+    ],
+  };
 
+  const sourcesEl = document.getElementById("sources");
   const branchesEl = document.getElementById("branches");
   const feedEl = document.getElementById("feed");
   const statusEl = document.getElementById("status");
 
-  TOPICS.forEach((t, i) => {
+  let currentSource = "IEEE Spectrum";
+
+  Object.keys(SOURCES).forEach((source, i) => {
     const btn = document.createElement("button");
-    btn.textContent = t.label;
+    btn.textContent = source;
     if (i === 0) btn.classList.add("active");
     btn.addEventListener("click", () => {
-      document.querySelectorAll("nav.branches button").forEach(x => x.classList.remove("active"));
+      document.querySelectorAll("nav.sources button").forEach(x => x.classList.remove("active"));
       btn.classList.add("active");
-      loadTopic(t);
+      currentSource = source;
+      renderTopics(source);
     });
-    branchesEl.appendChild(btn);
+    sourcesEl.appendChild(btn);
   });
 
-  async function loadTopic(topic) {
+  function renderTopics(source) {
+    branchesEl.innerHTML = "";
+    SOURCES[source].forEach((t, i) => {
+      const btn = document.createElement("button");
+      btn.textContent = t.label;
+      if (i === 0) btn.classList.add("active");
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("nav.branches button").forEach(x => x.classList.remove("active"));
+        btn.classList.add("active");
+        loadTopic(source, t);
+      });
+      branchesEl.appendChild(btn);
+    });
+    loadTopic(source, SOURCES[source][0]);
+  }
+
+  async function loadTopic(source, topic) {
     statusEl.textContent = "Loading…";
     statusEl.style.display = "block";
     feedEl.innerHTML = "";
@@ -153,9 +207,10 @@
         const date = item.pubDate
           ? new Date(item.pubDate).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })
           : "";
+        const metaParts = [source, date, item.author].filter(Boolean);
         a.innerHTML =
           '<span class="title">' + item.title + '</span>' +
-          '<span class="meta">' + topic.source + (date ? " · " + date : "") + '</span>';
+          '<span class="meta">' + metaParts.join(" · ") + '</span>';
         li.appendChild(a);
         feedEl.appendChild(li);
       });
@@ -165,7 +220,7 @@
     }
   }
 
-  loadTopic(TOPICS[0]);
+  renderTopics(currentSource);
 </script>
 <script src="../assets/theme.js"></script>
 </body>
