@@ -37,10 +37,9 @@
     background: transparent;
     border: 1px solid var(--border);
     color: var(--muted);
-    padding: 0.45rem 0.9rem;
+    padding: 0.4rem 0.85rem;
     border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 600;
+    font-size: 0.82rem;
     cursor: pointer;
     transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
   }
@@ -63,7 +62,9 @@
 
   ul#feed { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.75rem; }
   ul#feed li a {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
     padding: 1rem 1.25rem;
     border: 1px solid var(--border);
     border-radius: 10px;
@@ -72,8 +73,17 @@
     transition: border-color 0.15s ease, background 0.15s ease;
   }
   ul#feed li a:hover { border-color: var(--border-hover); background: var(--hover-bg); }
+  ul#feed li .text { flex: 1; min-width: 0; }
   ul#feed li .title { font-size: 0.95rem; }
   ul#feed li .meta { display: block; color: var(--muted); font-size: 0.78rem; margin-top: 0.35rem; }
+  ul#feed li .thumb {
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: var(--hover-bg);
+  }
 
   p#status { color: var(--muted); font-size: 0.85rem; }
   footer { margin-top: 3rem; color: var(--footer); font-size: 0.8rem; }
@@ -209,8 +219,11 @@
           : "";
         const metaParts = [source, date, item.author].filter(Boolean);
         a.innerHTML =
-          '<span class="title">' + item.title + '</span>' +
-          '<span class="meta">' + metaParts.join(" · ") + '</span>';
+          '<span class="text">' +
+            '<span class="title">' + item.title + '</span>' +
+            '<span class="meta">' + metaParts.join(" · ") + '</span>' +
+          '</span>' +
+          (item.thumbnail ? '<img class="thumb" src="' + item.thumbnail + '" alt="" loading="lazy">' : "");
         li.appendChild(a);
         feedEl.appendChild(li);
       });

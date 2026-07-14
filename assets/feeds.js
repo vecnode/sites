@@ -25,7 +25,12 @@ async function fetchFeedXml(feedUrl, limit) {
     const author = creators.length
       ? creators.filter(Boolean).join(", ")
       : (node.querySelector("author > name")?.textContent || node.querySelector("author")?.textContent || "").trim();
-    return { title, link, pubDate, author };
+    const thumbnail =
+      node.querySelector("content[medium=image]")?.getAttribute("url") ||
+      node.querySelector("thumbnail")?.getAttribute("url") ||
+      node.querySelector("enclosure[type^=image]")?.getAttribute("url") ||
+      "";
+    return { title, link, pubDate, author, thumbnail };
   });
 }
 
