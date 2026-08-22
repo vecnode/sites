@@ -2,20 +2,21 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Agentic Montage</title>
 <meta name="description" content="A real-time simulation of an agent-based media-montage system reading a corpus of declassified documents.">
 <link rel="icon" type="image/png" href="../assets/favicon.png">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; background: #000; overflow: hidden; }
+  html, body { height: 100%; background: #000; overflow: hidden; overscroll-behavior: none; }
   body {
     font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
     color: #d8d8d8;
     -webkit-font-smoothing: antialiased;
+    touch-action: manipulation;
   }
   body.idle { cursor: none; }
-  #stage { position: fixed; inset: 0; }
+  #stage { position: fixed; left: 0; top: 0; right: 0; height: 100%; height: 100dvh; }
 
   /* ---- layer 1 : the montage ---- */
   .plate {
@@ -28,25 +29,29 @@
   .plate.on { opacity: .5; }
 
   /* ---- layer 2 : state columns ---- */
-  .cols { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(4, 1fr); pointer-events: none; }
+  .cols { position: absolute; left: 0; right: 0; top: 35px; bottom: 30px;
+          display: grid; grid-template-columns: repeat(4, 1fr); pointer-events: none; }
   .col { overflow: hidden; position: relative; }
   .col .inner { position: absolute; bottom: 0; left: .9rem; right: .9rem; }
-  .col span { display: block; font-size: 8.5px; line-height: 1.42; color: #7d7d7d; white-space: nowrap; overflow: hidden; }
-  .col span.hot { color: #cfcfcf; }
-  .col:nth-child(2), .col:nth-child(3) { opacity: .55; }
+  .col span { display: block; font-size: 8.5px; line-height: 1.42; color: #6a6a6a; white-space: nowrap; overflow: hidden; }
+  .col span.hot { color: #b6b6b6; }
+  .col:nth-child(1), .col:nth-child(4) { opacity: .85; }
+  .col:nth-child(2), .col:nth-child(3) { opacity: .5; }
 
   /* ---- layer 3 : chrome ---- */
   .rule { position: absolute; background: #262626; }
   .rule.v { top: 0; bottom: 0; width: 1px; }
-  .rule.h { left: 0; right: 0; height: 1px; }
+  .rule.h { left: 0; right: 0; height: 1px; top: 34px; }
+  .r1 { left: 25%; } .r2 { left: 50%; } .r3 { left: 75%; }
 
   .tc { position: absolute; top: 10px; font-size: 10px; letter-spacing: .04em; color: #b4b4b4; }
   .tc small { display: block; font-size: 8px; color: #5c5c5c; letter-spacing: .12em; margin-top: 2px; }
+  .tc1 { left: 25.8%; } .tc2 { left: 50.8%; } .tc3 { left: 75.8%; }
   #mark { position: absolute; left: 1rem; top: 10px; font-size: 10px; letter-spacing: .22em; color: #e8e8e8; }
 
   /* ---- layer 4 : subtitle ---- */
+  #caption { position: absolute; left: 8vw; right: 34vw; top: 50%; transform: translateY(-50%); }
   #sub {
-    position: absolute; left: 8vw; right: 34vw; top: 50%; transform: translateY(-50%);
     font-family: Georgia, "Times New Roman", serif;
     font-size: clamp(28px, 4.4vw, 62px); line-height: 1.06; letter-spacing: -.02em;
     color: #fff; text-shadow: 0 0 26px rgba(0,0,0,.95), 0 0 60px rgba(0,0,0,.8);
@@ -54,19 +59,22 @@
   #sub b { font-weight: 400; opacity: 0; transition: opacity .34s linear; }
   #sub b.on { opacity: 1; }
   #speaker {
-    position: absolute; left: 8vw; top: 50%; transform: translateY(-260%);
+    display: block; margin-bottom: 1.1em;
     font-size: 9px; letter-spacing: .28em; color: #7a7a7a; text-transform: uppercase;
   }
 
   /* ---- layer 5 : footer ---- */
   #bar {
-    position: absolute; left: 0; right: 0; bottom: 0; height: 30px;
+    position: absolute; left: 0; right: 0; bottom: 0; height: 30px; overflow: hidden;
     border-top: 1px solid #262626; display: flex; align-items: center;
     font-size: 9px; letter-spacing: .16em; color: #6e6e6e; text-transform: uppercase;
     background: rgba(0,0,0,.6);
   }
-  #bar div { padding: 0 1rem; border-right: 1px solid #1c1c1c; height: 100%; display: flex; align-items: center; gap: .5rem; }
-  #bar div:last-child { border: 0; margin-left: auto; }
+  #bar div { padding: 0 1rem; border-right: 1px solid #1c1c1c; height: 100%;
+             display: flex; align-items: center; gap: .5rem; white-space: nowrap; }
+  #bar div:last-child { border: 0; flex: none; }
+  #bar #docid { margin-left: auto; min-width: 0; flex: 0 1 auto; display: block; line-height: 30px;
+                overflow: hidden; text-overflow: ellipsis; }
   #bar a { color: inherit; text-decoration: none; }
   #bar a:hover { color: #d8d8d8; }
   i { display: inline-block; width: 5px; height: 5px; background: #444; font-style: normal;
@@ -82,6 +90,7 @@
   body.bare .cols, body.bare .rule, body.bare .tc, body.bare #mark,
   body.bare #bar, body.bare #speaker, body.bare #hint { opacity: 0; pointer-events: none; }
   .cols, .rule, .tc, #mark, #bar, #speaker { transition: opacity .5s linear; }
+  #speaker { transition: opacity .5s linear; }
 
   /* ---- hint + pause + gate ---- */
   #hint {
@@ -89,6 +98,11 @@
     color: #5c5c5c; text-transform: uppercase; transition: opacity .8s linear;
   }
   #hint.gone { opacity: 0; }
+  #hint .touch { display: none; }
+  @media (hover: none) {
+    #hint .keys { display: none; }
+    #hint .touch { display: inline; }
+  }
   #paused {
     position: absolute; inset: 0; display: none; align-items: center; justify-content: center;
     font-size: 10px; letter-spacing: .4em; color: #e8e8e8; text-transform: uppercase;
@@ -98,11 +112,46 @@
   #gate {
     position: fixed; inset: 0; z-index: 10; background: #000; color: #d8d8d8;
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.4rem;
-    cursor: pointer;
+    cursor: pointer; text-align: center; padding: 2rem;
   }
   #gate h1 { font-size: 11px; font-weight: 400; letter-spacing: .5em; color: #e8e8e8; }
   #gate p { font-size: 9px; letter-spacing: .22em; text-transform: uppercase; color: #5c5c5c; }
   #gate.gone { display: none; }
+
+  /* ---- narrow screens ---- */
+  @media (max-width: 760px) {
+    .cols { grid-template-columns: repeat(2, 1fr); bottom: 26px; opacity: .5; }
+    .col:nth-child(n+3) { display: none; }
+    .col:nth-child(1) { opacity: .8; }
+    .col .inner { left: .6rem; right: .6rem; }
+    .col span { font-size: 7px; line-height: 1.5; }
+    .r1 { left: 50%; }
+    .r2, .r3 { display: none; }
+    .tc1 { left: auto; right: 1rem; text-align: right; }
+    .tc2, .tc3 { display: none; }
+    #mark { font-size: 9px; letter-spacing: .16em; }
+    #hint { top: auto; bottom: 38px; right: 1rem; }
+    #caption { left: 6vw; right: 6vw; top: auto; bottom: 20%; transform: none; }
+    #sub {
+      font-size: clamp(19px, 5.6vw, 34px); line-height: 1.12;
+      text-shadow: 0 0 18px rgba(0,0,0,.98), 0 0 44px rgba(0,0,0,.9);
+    }
+    #speaker { font-size: 7.5px; letter-spacing: .2em; margin-bottom: .9em; }
+    #vign { background: radial-gradient(ellipse at 50% 45%, transparent 20%, rgba(0,0,0,.8) 100%); }
+    #bar { height: 26px; font-size: 8px; }
+    #bar .led { display: none; }
+    #bar .led.keep { display: flex; padding: 0 .8rem; }
+    #bar div { padding: 0 .8rem; }
+    /* flex-basis 0 rather than shrink-from-content: the id takes only the
+       space left over, so the back link can never be pushed off the edge */
+    #bar #docid { margin: 0; flex: 1 1 0; padding: 0 .8rem; line-height: 26px; text-align: right; }
+  }
+
+  @media (max-height: 520px) {
+    #caption { top: auto; bottom: 12%; right: 8vw; transform: none; }
+    #sub { font-size: clamp(17px, 3.2vw, 30px); line-height: 1.12; }
+    #hint { top: 12px; bottom: auto; }
+  }
 
   @media (prefers-reduced-motion: reduce) {
     .plate { transition-duration: .01ms; }
@@ -119,27 +168,28 @@
     <div class="col"><div class="inner"></div></div>
     <div class="col"><div class="inner"></div></div>
   </div>
-  <div class="rule v" style="left:25%"></div>
-  <div class="rule v" style="left:50%"></div>
-  <div class="rule v" style="left:75%"></div>
-  <div class="rule h" style="top:34px"></div>
+  <div class="rule v r1"></div>
+  <div class="rule v r2"></div>
+  <div class="rule v r3"></div>
+  <div class="rule h"></div>
   <div id="mark">AGENTIC MONTAGE</div>
-  <div class="tc" style="left:25.8%">00:00:00.00<small>CORPUS</small></div>
-  <div class="tc" style="left:50.8%">00:00:00.00<small>INFERENCE</small></div>
-  <div class="tc" style="left:75.8%">00:00:00.00<small>SPEECH</small></div>
-  <div id="hint">space pause &middot; c chrome &middot; f fullscreen</div>
-  <div id="speaker">internal monologue</div>
-  <div id="sub"></div>
+  <div class="tc tc1">00:00:00.00<small>CORPUS</small></div>
+  <div class="tc tc2">00:00:00.00<small>INFERENCE</small></div>
+  <div class="tc tc3">00:00:00.00<small>SPEECH</small></div>
+  <div id="hint"><span class="keys">space pause &middot; c chrome &middot; f fullscreen</span><span class="touch">tap to pause</span></div>
+  <div id="caption">
+    <span id="speaker">internal monologue</span>
+    <div id="sub"></div>
+  </div>
   <div id="scan"></div>
   <div id="paused">paused</div>
   <div id="bar">
-    <div><i class="up" id="l0"></i>gate array</div>
-    <div><i class="up" id="l1"></i>llava-1.5-7b + lora</div>
-    <div><i id="l2"></i>craft ocr</div>
-    <div><i class="up" id="l3"></i>supertonic 3</div>
-    <div><i id="l4"></i>gemma4:e4b</div>
+    <div class="led keep"><i class="up" id="l0"></i>gate array</div>
+    <div class="led"><i class="up" id="l1"></i>llava-1.5-7b + lora</div>
+    <div class="led"><i id="l2"></i>craft ocr</div>
+    <div class="led"><i class="up" id="l3"></i>supertonic 3</div>
+    <div class="led"><i id="l4"></i>gemma4:e4b</div>
     <div id="docid">&mdash;</div>
-    <div id="doclabel">doc 00 / 00</div>
     <div><a href="../">&larr; sites</a></div>
   </div>
 </div>
@@ -165,7 +215,7 @@ var HAS_AUDIO = CORPUS.some(function (d) { return !!d.audio; });
 
 /* ------------------------------------------------------------------ *
  * 1. stand-in scans, generated when an entry has no src.
- *    Seeded by corpus index, so every loop looks identical.
+ *    Seeded by slot, so every loop looks identical.
  * ------------------------------------------------------------------ */
 function rng(s) {
   s = s >>> 0 || 1;
@@ -220,21 +270,21 @@ function makeDoc(seed) {
  * 2. montage plates
  * ------------------------------------------------------------------ */
 var platesEl = document.getElementById("plates"), plates = [];
-function showPlate(item, index) {
+function showPlate(item, slot) {
   var el = document.createElement("div");
   el.className = "plate";
-  el.style.backgroundImage = "url(" + (item.src || makeDoc(index)) + ")";
+  el.style.backgroundImage = "url(" + (item.src || makeDoc(slot)) + ")";
   if (item.src) {
     var probe = new Image();
-    probe.onerror = function () { el.style.backgroundImage = "url(" + makeDoc(index) + ")"; };
+    probe.onerror = function () { el.style.backgroundImage = "url(" + makeDoc(slot) + ")"; };
     probe.src = item.src;
   }
-  var r = rng(index + 77);
+  var r = rng(slot + 77);
   var sx = 1.05 + r() * 0.25, dx = (r() - 0.5) * 10, dy = (r() - 0.5) * 8;
   el.anim = el.animate(
     [{ transform: "scale(" + sx + ") translate(0,0)" },
      { transform: "scale(" + (sx + 0.16) + ") translate(" + dx + "%," + dy + "%)" }],
-    { duration: 22000, easing: "linear", fill: "forwards" }
+    { duration: 26000, easing: "linear", fill: "forwards" }
   );
   if (halted) el.anim.pause();
   platesEl.appendChild(el);
@@ -297,11 +347,11 @@ function pumpLeds() {
 }
 
 /* ------------------------------------------------------------------ *
- * 4. sequencer — one document, its lines, then the next; loops
+ * 4. sequencer — one document, its lines, then the next; loops.
+ *    The corpus size is deliberately never shown.
  * ------------------------------------------------------------------ */
 var subEl = document.getElementById("sub");
 var docIdEl = document.getElementById("docid");
-var docLabelEl = document.getElementById("doclabel");
 var cursor = 0, seq = null, activeLine = -1, wordEls = [], audioEl = null;
 
 function buildSequence(slot) {
@@ -317,17 +367,16 @@ function buildSequence(slot) {
   return { item: item, slot: slot, lines: out, end: at + 600 };
 }
 
-/* slot is the wrapped index, so a generated stand-in and its drift are the
-   same on every pass through the loop */
 function enterDocument(count) {
   var slot = count % TOTAL;
   seq = buildSequence(slot);
   activeLine = -1;
   showPlate(seq.item, slot);
   docIdEl.textContent = seq.item.id || "—";
-  docLabelEl.textContent = "doc " + pad(slot + 1) + " / " + pad(TOTAL);
+  var nxt = CORPUS[(slot + 1) % TOTAL];
+  if (nxt && nxt.src) { var pre = new Image(); pre.src = nxt.src; }
   if (seq.item.audio) {
-    if (audioEl) { audioEl.pause(); }
+    if (audioEl) audioEl.pause();
     audioEl = new Audio(seq.item.audio);
     audioEl.play().catch(function () { /* blocked or missing: subtitles carry on */ });
   }
@@ -394,6 +443,14 @@ document.addEventListener("keydown", function (e) {
     else document.documentElement.requestFullscreen().catch(function () {});
   }
 });
+
+/* touch has no space bar: tap the stage to pause, but never swallow a link */
+if (window.matchMedia && matchMedia("(pointer: coarse)").matches) {
+  document.getElementById("stage").addEventListener("click", function (e) {
+    if (e.target.closest("a")) return;
+    setHalted(!halted);
+  });
+}
 
 var idleTimer;
 function wake() {
