@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>agent1</title>
+<meta name="description" content="A real-time simulation of an agent-based media-montage system reading a corpus of declassified documents.">
+<link rel="icon" type="image/png" href="../assets/favicon.png">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: #000; overflow: hidden; }
+  body {
+    font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+    color: #d8d8d8;
+    -webkit-font-smoothing: antialiased;
+  }
+  body.idle { cursor: none; }
+  #stage { position: fixed; inset: 0; }
+
+  /* ---- layer 1 : the montage ---- */
+  .plate {
+    position: absolute; inset: -8%;
+    background-repeat: no-repeat; background-position: center; background-size: contain;
+    filter: grayscale(1) contrast(1.35) brightness(.55);
+    opacity: 0; transition: opacity 2.4s linear;
+    will-change: transform, opacity;
+  }
+  .plate.on { opacity: .5; }
+
+  /* ---- layer 2 : state columns ---- */
+  .cols { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(4, 1fr); pointer-events: none; }
+  .col { overflow: hidden; position: relative; }
+  .col .inner { position: absolute; bottom: 0; left: .9rem; right: .9rem; }
+  .col span { display: block; font-size: 8.5px; line-height: 1.42; color: #7d7d7d; white-space: nowrap; overflow: hidden; }
+  .col span.hot { color: #cfcfcf; }
+  .col:nth-child(2), .col:nth-child(3) { opacity: .55; }
+
+  /* ---- layer 3 : chrome ---- */
+  .rule { position: absolute; background: #262626; }
+  .rule.v { top: 0; bottom: 0; width: 1px; }
+  .rule.h { left: 0; right: 0; height: 1px; }
+
+  .tc { position: absolute; top: 10px; font-size: 10px; letter-spacing: .04em; color: #b4b4b4; }
+  .tc small { display: block; font-size: 8px; color: #5c5c5c; letter-spacing: .12em; margin-top: 2px; }
+  #mark { position: absolute; left: 1rem; top: 10px; font-size: 10px; letter-spacing: .3em; color: #e8e8e8; }
+
+  /* ---- layer 4 : subtitle ---- */
+  #sub {
+    position: absolute; left: 8vw; right: 34vw; top: 50%; transform: translateY(-50%);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(28px, 4.4vw, 62px); line-height: 1.06; letter-spacing: -.02em;
+    color: #fff; text-shadow: 0 0 26px rgba(0,0,0,.95), 0 0 60px rgba(0,0,0,.8);
+  }
+  #sub b { font-weight: 400; opacity: 0; transition: opacity .34s linear; }
+  #sub b.on { opacity: 1; }
+  #speaker {
+    position: absolute; left: 8vw; top: 50%; transform: translateY(-260%);
+    font-size: 9px; letter-spacing: .28em; color: #7a7a7a; text-transform: uppercase;
+  }
+
+  /* ---- layer 5 : footer ---- */
+  #bar {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 30px;
+    border-top: 1px solid #262626; display: flex; align-items: center;
+    font-size: 9px; letter-spacing: .16em; color: #6e6e6e; text-transform: uppercase;
+    background: rgba(0,0,0,.6);
+  }
+  #bar div { padding: 0 1rem; border-right: 1px solid #1c1c1c; height: 100%; display: flex; align-items: center; gap: .5rem; }
+  #bar div:last-child { border: 0; margin-left: auto; }
+  #bar a { color: inherit; text-decoration: none; }
+  #bar a:hover { color: #d8d8d8; }
+  i { display: inline-block; width: 5px; height: 5px; background: #444; font-style: normal;
+      transition: background .2s linear; }
+  i.up { background: #d8d8d8; }
+
+  #vign { position: absolute; inset: 0; pointer-events: none;
+          background: radial-gradient(ellipse at 40% 50%, transparent 30%, rgba(0,0,0,.72) 100%); }
+  #scan { position: absolute; inset: 0; pointer-events: none; opacity: .16;
+          background: repeating-linear-gradient(to bottom, #fff 0 1px, transparent 1px 3px); mix-blend-mode: overlay; }
+
+  /* ---- chrome hidden : projection mode ---- */
+  body.bare .cols, body.bare .rule, body.bare .tc, body.bare #mark,
+  body.bare #bar, body.bare #speaker, body.bare #hint { opacity: 0; pointer-events: none; }
+  .cols, .rule, .tc, #mark, #bar, #speaker { transition: opacity .5s linear; }
+
+  /* ---- hint + pause + gate ---- */
+  #hint {
+    position: absolute; right: 1rem; top: 12px; font-size: 8.5px; letter-spacing: .18em;
+    color: #5c5c5c; text-transform: uppercase; transition: opacity .8s linear;
+  }
+  #hint.gone { opacity: 0; }
+  #paused {
+    position: absolute; inset: 0; display: none; align-items: center; justify-content: center;
+    font-size: 10px; letter-spacing: .4em; color: #e8e8e8; text-transform: uppercase;
+    background: rgba(0,0,0,.55); z-index: 5;
+  }
+  body.halted #paused { display: flex; }
+  #gate {
+    position: fixed; inset: 0; z-index: 10; background: #000; color: #d8d8d8;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.4rem;
+    cursor: pointer;
+  }
+  #gate h1 { font-size: 11px; font-weight: 400; letter-spacing: .5em; color: #e8e8e8; }
+  #gate p { font-size: 9px; letter-spacing: .22em; text-transform: uppercase; color: #5c5c5c; }
+  #gate.gone { display: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .plate { transition-duration: .01ms; }
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="plates"></div>
+  <div id="vign"></div>
+  <div class="cols">
+    <div class="col"><div class="inner"></div></div>
+    <div class="col"><div class="inner"></div></div>
+    <div class="col"><div class="inner"></div></div>
+    <div class="col"><div class="inner"></div></div>
+  </div>
+  <div class="rule v" style="left:25%"></div>
+  <div class="rule v" style="left:50%"></div>
+  <div class="rule v" style="left:75%"></div>
+  <div class="rule h" style="top:34px"></div>
+  <div id="mark">AGENT1</div>
+  <div class="tc" style="left:25.8%">00:00:00.00<small>CORPUS</small></div>
+  <div class="tc" style="left:50.8%">00:00:00.00<small>INFERENCE</small></div>
+  <div class="tc" style="left:75.8%">00:00:00.00<small>SPEECH</small></div>
+  <div id="hint">space pause &middot; c chrome &middot; f fullscreen</div>
+  <div id="speaker">internal monologue</div>
+  <div id="sub"></div>
+  <div id="scan"></div>
+  <div id="paused">paused</div>
+  <div id="bar">
+    <div><i class="up" id="l0"></i>gate array</div>
+    <div><i class="up" id="l1"></i>llava-1.5-7b + lora</div>
+    <div><i id="l2"></i>craft ocr</div>
+    <div><i class="up" id="l3"></i>supertonic 3</div>
+    <div><i id="l4"></i>gemma4:e4b</div>
+    <div id="docid">&mdash;</div>
+    <div id="doclabel">doc 00 / 00</div>
+    <div><a href="../">&larr; sites</a></div>
+  </div>
+</div>
+
+<div id="gate" class="gone">
+  <h1>AGENT1</h1>
+  <p>click to begin</p>
+</div>
+
+<script src="corpus.js"></script>
+<script>
+(function () {
+"use strict";
+
+/* ------------------------------------------------------------------ *
+ * 0. corpus
+ * ------------------------------------------------------------------ */
+var CORPUS = (window.AGENT1_CORPUS && window.AGENT1_CORPUS.length)
+  ? window.AGENT1_CORPUS
+  : [{ id: "NO CORPUS", src: null, lines: ["The manifest is empty. I am describing a page that is not here."] }];
+var TOTAL = CORPUS.length;
+var HAS_AUDIO = CORPUS.some(function (d) { return !!d.audio; });
+
+/* ------------------------------------------------------------------ *
+ * 1. stand-in scans, generated when an entry has no src.
+ *    Seeded by corpus index, so every loop looks identical.
+ * ------------------------------------------------------------------ */
+function rng(s) {
+  s = s >>> 0 || 1;
+  return function () { s ^= s << 13; s >>>= 0; s ^= s >>> 17; s ^= s << 5; s >>>= 0; return s / 4294967296; };
+}
+var WORDS = ("HEADQUARTERS ARMY AIR FORCES INTELLIGENCE DIVISION REQUIREMENTS FLYING DISCS OBSERVED " +
+  "WRIGHT FIELD DAYTON OHIO MATERIEL COMMAND ALERT BASIS INTERCEPTOR AIRCRAFT GUN CAMERA PHOTOGRAPHS " +
+  "UNIDENTIFIED AERIAL PHENOMENA REPORTED SIGHTED ALTITUDE KNOTS ESTIMATED WITNESS STATEMENT ATTACHED " +
+  "CONFIDENTIAL ROUTING RECORD SHEET COMMENT NO CONCURRENCE REQUESTED BRIGADIER GENERAL STAFF").split(" ");
+var docCache = {};
+function makeDoc(seed) {
+  if (docCache[seed]) return docCache[seed];
+  var w = 880, h = 1160, c = document.createElement("canvas");
+  c.width = w; c.height = h;
+  var x = c.getContext("2d"), r = rng(seed + 1), i, k;
+  x.fillStyle = "#ded9c8"; x.fillRect(0, 0, w, h);
+  for (i = 0; i < 70; i++) {
+    x.fillStyle = "rgba(120,105,70," + (r() * 0.05) + ")";
+    var s = 40 + r() * 220;
+    x.beginPath(); x.ellipse(r() * w, r() * h, s, s * 0.6, r() * 3, 0, 7); x.fill();
+  }
+  x.strokeStyle = "rgba(60,50,30,.35)"; x.lineWidth = 1; x.strokeRect(48, 44, w - 96, h - 88);
+  x.fillStyle = "#2a2620"; x.font = "bold 22px ui-monospace, monospace";
+  x.fillText(["RESTRICTED", "CONFIDENTIAL", "ROUTING AND RECORD SHEET", "MEMORANDUM"][seed % 4], 70, 92);
+  x.font = "12px ui-monospace, monospace";
+  var y = 140;
+  for (i = 0; i < 54; i++) {
+    if (r() < 0.09) { y += 16; continue; }
+    var line = "", n = 4 + Math.floor(r() * 9);
+    for (k = 0; k < n; k++) line += WORDS[Math.floor(r() * WORDS.length)] + " ";
+    x.fillStyle = "rgba(38,34,26," + (0.55 + r() * 0.4) + ")";
+    x.fillText(line.slice(0, 86), 70 + (r() < 0.2 ? 60 : 0), y);
+    y += 19; if (y > h - 120) break;
+  }
+  for (i = 0; i < 3 + (seed % 4); i++) {
+    x.fillStyle = "rgba(24,22,18,.92)";
+    x.fillRect(70 + r() * 380, 150 + r() * (h - 320), 120 + r() * 280, 15);
+  }
+  x.save(); x.translate(w - 262, 150); x.rotate(-0.22);
+  x.strokeStyle = "rgba(120,30,25,.5)"; x.lineWidth = 4; x.strokeRect(0, 0, 200, 54);
+  x.fillStyle = "rgba(120,30,25,.5)"; x.font = "bold 30px ui-monospace, monospace";
+  x.fillText("DECLASS", 12, 38); x.restore();
+  for (i = 0; i < 2; i++) { x.fillStyle = "rgba(30,28,22,.6)"; x.beginPath(); x.arc(28, 300 + i * 420, 11, 0, 7); x.fill(); }
+  var im = x.getImageData(0, 0, w, h), d = im.data;
+  for (i = 0; i < d.length; i += 4) { var nz = (r() - 0.5) * 30; d[i] += nz; d[i + 1] += nz; d[i + 2] += nz; }
+  x.putImageData(im, 0, 0);
+  docCache[seed] = c.toDataURL();
+  return docCache[seed];
+}
+
+/* ------------------------------------------------------------------ *
+ * 2. montage plates
+ * ------------------------------------------------------------------ */
+var platesEl = document.getElementById("plates"), plates = [];
+function showPlate(item, index) {
+  var el = document.createElement("div");
+  el.className = "plate";
+  el.style.backgroundImage = "url(" + (item.src || makeDoc(index)) + ")";
+  if (item.src) {
+    var probe = new Image();
+    probe.onerror = function () { el.style.backgroundImage = "url(" + makeDoc(index) + ")"; };
+    probe.src = item.src;
+  }
+  var r = rng(index + 77);
+  var sx = 1.05 + r() * 0.25, dx = (r() - 0.5) * 10, dy = (r() - 0.5) * 8;
+  el.anim = el.animate(
+    [{ transform: "scale(" + sx + ") translate(0,0)" },
+     { transform: "scale(" + (sx + 0.16) + ") translate(" + dx + "%," + dy + "%)" }],
+    { duration: 22000, easing: "linear", fill: "forwards" }
+  );
+  if (halted) el.anim.pause();
+  platesEl.appendChild(el);
+  requestAnimationFrame(function () { el.classList.add("on"); });
+  plates.push(el);
+  while (plates.length > 2) {
+    var old = plates.shift();
+    old.classList.remove("on");
+    (function (o) { setTimeout(function () { o.remove(); }, 2600); })(old);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * 3. clock — one rAF loop drives everything, so pause is exact
+ * ------------------------------------------------------------------ */
+var t = 0, last = 0, halted = false;
+
+/* ---- state columns ---- */
+var LOG = ["system wants to change, True", "system wants to change, False", "memory valid", "memory flush",
+  "gate: media -> ai", "gate: network -> media", "gate: ai -> speech", "adapter fusion 0.41", "adapter fusion 0.77",
+  "ocr conf 0.88", "ocr conf 0.61", "llava tokens 128", "llava tokens 512", "tts queue 3", "tts queue 0",
+  "router idle", "router busy", "signal 8080 ok", "corpus seek 0x1f2a", "summary accepted", "summary rejected",
+  "lora scale 0.5", "frame committed", "frame dropped"];
+var colEls = [].slice.call(document.querySelectorAll(".col .inner"));
+var colNext = colEls.map(function (_, i) { return i * 30; });
+function pumpColumns() {
+  colEls.forEach(function (inner, i) {
+    var period = 70 + i * 45;
+    while (t > colNext[i]) {
+      colNext[i] += period;
+      var s = document.createElement("span");
+      s.textContent = LOG[Math.floor(Math.random() * LOG.length)];
+      if (Math.random() < 0.12) s.className = "hot";
+      inner.appendChild(s);
+      while (inner.children.length > 110) inner.removeChild(inner.firstChild);
+    }
+  });
+}
+
+/* ---- timecodes ---- */
+var tcs = [].slice.call(document.querySelectorAll(".tc")), off = [0, 4211000, 9903000];
+function pad(n) { return String(n).padStart(2, "0"); }
+function fmt(ms) {
+  return pad(Math.floor(ms / 3600000)) + ":" + pad(Math.floor(ms / 60000) % 60) + ":" +
+         pad(Math.floor(ms / 1000) % 60) + "." + pad(Math.floor(ms / 1000 * 25) % 25);
+}
+function pumpClocks() {
+  for (var i = 0; i < tcs.length; i++) {
+    tcs[i].childNodes[0].nodeValue = fmt(t * (1 + i * 0.31) + off[i]);
+  }
+}
+
+/* ---- module leds ---- */
+var leds = [0, 1, 2, 3, 4].map(function (i) { return document.getElementById("l" + i); });
+var ledNext = 0;
+function pumpLeds() {
+  if (t < ledNext) return;
+  ledNext = t + 900;
+  leds.forEach(function (el, i) { el.classList.toggle("up", Math.random() < (i === 0 ? 0.9 : 0.55)); });
+}
+
+/* ------------------------------------------------------------------ *
+ * 4. sequencer — one document, its lines, then the next; loops
+ * ------------------------------------------------------------------ */
+var subEl = document.getElementById("sub");
+var docIdEl = document.getElementById("docid");
+var docLabelEl = document.getElementById("doclabel");
+var cursor = 0, seq = null, activeLine = -1, wordEls = [], audioEl = null;
+
+function buildSequence(slot) {
+  var item = CORPUS[slot];
+  var lines = (item.lines && item.lines.length) ? item.lines : ["—"];
+  var out = [], at = t + 900;
+  lines.forEach(function (text) {
+    var words = text.split(/\s+/);
+    var dur = 1400 + words.length * 380;
+    out.push({ words: words, start: at, end: at + dur });
+    at += dur + 900;
+  });
+  return { item: item, slot: slot, lines: out, end: at + 600 };
+}
+
+/* slot is the wrapped index, so a generated stand-in and its drift are the
+   same on every pass through the loop */
+function enterDocument(count) {
+  var slot = count % TOTAL;
+  seq = buildSequence(slot);
+  activeLine = -1;
+  showPlate(seq.item, slot);
+  docIdEl.textContent = seq.item.id || "—";
+  docLabelEl.textContent = "doc " + pad(slot + 1) + " / " + pad(TOTAL);
+  if (seq.item.audio) {
+    if (audioEl) { audioEl.pause(); }
+    audioEl = new Audio(seq.item.audio);
+    audioEl.play().catch(function () { /* blocked or missing: subtitles carry on */ });
+  }
+}
+
+function renderLine(i) {
+  activeLine = i;
+  subEl.textContent = "";
+  wordEls = [];
+  if (i < 0) return;
+  seq.lines[i].words.forEach(function (w) {
+    var b = document.createElement("b");
+    b.textContent = w + " ";
+    subEl.appendChild(b);
+    wordEls.push(b);
+  });
+}
+
+function pumpSequence() {
+  if (!seq || t >= seq.end) { enterDocument(cursor++); return; }
+  var i = -1;
+  for (var k = 0; k < seq.lines.length; k++) {
+    if (t >= seq.lines[k].start && t < seq.lines[k].end) { i = k; break; }
+  }
+  if (i !== activeLine) renderLine(i);
+  if (i < 0) return;
+  var ln = seq.lines[i];
+  var step = Math.max(90, (ln.end - ln.start - 700) / ln.words.length);
+  var shown = Math.floor((t - ln.start) / step);
+  for (var j = 0; j < wordEls.length; j++) {
+    if (j <= shown) wordEls[j].classList.add("on");
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * 5. loop + controls
+ * ------------------------------------------------------------------ */
+function frame(now) {
+  if (!last) last = now;
+  var dt = Math.min(now - last, 100);
+  last = now;
+  if (!halted) {
+    t += dt;
+    pumpColumns();
+    pumpClocks();
+    pumpLeds();
+    pumpSequence();
+  }
+  requestAnimationFrame(frame);
+}
+
+function setHalted(v) {
+  halted = v;
+  document.body.classList.toggle("halted", v);
+  plates.forEach(function (p) { if (p.anim) { v ? p.anim.pause() : p.anim.play(); } });
+  if (audioEl) { v ? audioEl.pause() : audioEl.play().catch(function () {}); }
+}
+
+document.addEventListener("keydown", function (e) {
+  if (e.code === "Space") { e.preventDefault(); setHalted(!halted); }
+  else if (e.key === "c" || e.key === "C") { document.body.classList.toggle("bare"); }
+  else if (e.key === "f" || e.key === "F") {
+    if (document.fullscreenElement) document.exitFullscreen();
+    else document.documentElement.requestFullscreen().catch(function () {});
+  }
+});
+
+var idleTimer;
+function wake() {
+  document.body.classList.remove("idle");
+  clearTimeout(idleTimer);
+  idleTimer = setTimeout(function () { document.body.classList.add("idle"); }, 3000);
+}
+document.addEventListener("mousemove", wake);
+wake();
+
+setTimeout(function () { document.getElementById("hint").classList.add("gone"); }, 6000);
+
+/* audio needs a user gesture; without audio the piece just starts */
+var gate = document.getElementById("gate");
+function start() { requestAnimationFrame(frame); }
+if (HAS_AUDIO) {
+  gate.classList.remove("gone");
+  gate.addEventListener("click", function () { gate.classList.add("gone"); start(); }, { once: true });
+} else {
+  start();
+}
+})();
+</script>
+</body>
+</html>
