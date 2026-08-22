@@ -26,7 +26,10 @@
     opacity: 0; transition: opacity 2.4s linear;
     will-change: transform, opacity;
   }
-  .plate.on { opacity: .5; }
+  .plate.on { opacity: .46; }
+  /* on a landscape screen a portrait page letterboxes to under half the width,
+     so open the plate out past the frame and let the drift crop it */
+  @media (min-aspect-ratio: 1/1) { .plate { inset: -26%; } }
 
   /* ---- layer 2 : state columns ---- */
   .cols { position: absolute; left: 0; right: 0; top: 35px; bottom: 30px;
@@ -83,6 +86,8 @@
 
   #vign { position: absolute; inset: 0; pointer-events: none;
           background: radial-gradient(ellipse at 40% 50%, transparent 30%, rgba(0,0,0,.72) 100%); }
+  #scrim { position: absolute; inset: 0; pointer-events: none;
+           background: linear-gradient(to right, rgba(0,0,0,.66) 0%, rgba(0,0,0,.5) 30%, rgba(0,0,0,0) 62%); }
   #scan { position: absolute; inset: 0; pointer-events: none; opacity: .16;
           background: repeating-linear-gradient(to bottom, #fff 0 1px, transparent 1px 3px); mix-blend-mode: overlay; }
 
@@ -138,6 +143,7 @@
     }
     #speaker { font-size: 7.5px; letter-spacing: .2em; margin-bottom: .9em; }
     #vign { background: radial-gradient(ellipse at 50% 45%, transparent 20%, rgba(0,0,0,.8) 100%); }
+    #scrim { background: linear-gradient(to top, rgba(0,0,0,.74) 0%, rgba(0,0,0,.5) 30%, rgba(0,0,0,0) 62%); }
     #bar { height: 26px; font-size: 8px; }
     #bar .led { display: none; }
     #bar .led.keep { display: flex; padding: 0 .8rem; }
@@ -145,6 +151,10 @@
     /* flex-basis 0 rather than shrink-from-content: the id takes only the
        space left over, so the back link can never be pushed off the edge */
     #bar #docid { margin: 0; flex: 1 1 0; padding: 0 .8rem; line-height: 26px; text-align: right; }
+  }
+
+  @media (max-aspect-ratio: 1/1) {
+    #scrim { background: linear-gradient(to top, rgba(0,0,0,.74) 0%, rgba(0,0,0,.5) 30%, rgba(0,0,0,0) 62%); }
   }
 
   @media (max-height: 520px) {
@@ -162,6 +172,7 @@
 <div id="stage">
   <div id="plates"></div>
   <div id="vign"></div>
+  <div id="scrim"></div>
   <div class="cols">
     <div class="col"><div class="inner"></div></div>
     <div class="col"><div class="inner"></div></div>
