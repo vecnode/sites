@@ -22,15 +22,17 @@ var TOTAL = CORPUS.length;
 var HAS_AUDIO = CORPUS.some(function (d) { return !!d.audio; });
 
 /* ---- curated date fixes -------------------------------------------------------
-   Two OCR-read dates are wrong (a 1957 for the June 1947 Mount Rainier
-   sighting, a 1934 for the July 1947 Alta, Utah sighting). The summaries stay
-   verbatim; only the date shown is corrected, keyed by page so a fix is one
-   line. Applied to the id at load, so the footer and the locator can never
-   disagree about which page is on screen.
+   Three OCR-read dates are wrong (a 1957 for the June 1947 Mount Rainier
+   sighting, a 1947 for the October 1955 Senator Russell sighting near Baku,
+   and a 1934 for the July 1955 Alta, Utah sighting by the same party). The
+   summaries stay verbatim; only the date shown is corrected, keyed by page so
+   a fix is one line. Applied to the id at load, so the footer and the locator
+   can never disagree about which page is on screen.
 --------------------------------------------------------------------------------- */
 var DATE_FIXES = {
   "media/53.jpg": "24 JUN 1947",   /* the nine aircraft against Mount Rainier */
-  "media/56.jpg": "17 JUL 1947"    /* the disc near Alta, Utah */
+  "media/55.jpg": "04 OCT 1955",   /* Russell's party, train between Baku and Tbilisi */
+  "media/56.jpg": "17 JUL 1955"    /* the disc near Alta, Utah */
 };
 (function () {
   for (var i = 0; i < CORPUS.length; i++) {

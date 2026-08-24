@@ -459,6 +459,7 @@ window.AGENT1_CORPUS = [
     id: "APOLLO 11 / 20 JUL 1969",
     ref: "nasa uap d4 apollo 11 technical crew debriefing 1969 / p.3",
     family: "NASA APOLLO",
+    place: ["Houston", "Texas", 29.76, -95.37],
     src: "media/31.jpg",
     summary:
       "This page recounts a discussion during a space mission, likely Apollo, regarding an unidentified object observed through the spacecraft’s windows. The crew – Collins, Armstrong, and Aldrin – suspected it might be the S-IVB stage, initially estimated to be 6,000 miles away. They noted a possible “bump” and described the object as resembling an open suitcase, observing it with monoculars and considering its sizable dimension within their vicinity.",
@@ -472,6 +473,7 @@ window.AGENT1_CORPUS = [
     id: "APOLLO 11 / JUL 1969",
     ref: "nasa uap d4 apollo 11 technical crew debriefing 1969 / p.11",
     family: "NASA APOLLO",
+    place: ["Houston", "Texas", 29.76, -95.37],
     src: "media/32.jpg",
     summary:
       "This page appears to be a post-mission report discussing an observation of a bright light near Earth. The text suggests a possible explanation for the light – a reflection from a lake – rather than a laser beam aimed at the Moon.  It references “ALDRIN” and revises an initial conclusion, noting the unusual nature of the phenomenon observed at such a distance, and referencing a film where the event wasn’t anticipated.",
@@ -485,6 +487,7 @@ window.AGENT1_CORPUS = [
     id: "APOLLO 17 / DEC 1972",
     ref: "nasa uap d6 apollo 17 technical crew debriefing 1973 / p.2",
     family: "NASA APOLLO",
+    place: ["Houston", "Texas", 29.76, -95.37],
     src: "media/33.jpg",
     summary:
       "This page recounts observations from a lunar mission, likely Apollo, detailing a strange “tunnel” seen through the rendezvous window after a fireball subsided.  Evans describes a bright spot resembling a tunnel, with the fireball visible further back.  The crew also noted an unusual sighting of an “aircraft carrier superstructure” and experienced frequent light flashes during the flight, though visibility was hampered by fog and limited Earth observation due to a small crescent.  The text references CERNAN, SCHMITT, and the ALFMED experiment.",
@@ -498,6 +501,7 @@ window.AGENT1_CORPUS = [
     id: "SKYLAB / 1973",
     ref: "nasa uap d7 skylab technical crew debriefing 1973 / p.7",
     family: "NASA SKYLAB",
+    place: ["Houston", "Texas", 29.76, -95.37],
     src: "media/34.jpg",
     summary:
       "This page discusses visual sightings during a countdown and subsequent orbital activity, likely related to a space mission. Participants, including LOUSMA and GARRIOTT, reported observing unusual satellite-like objects and a bright, unidentified red star – described as significantly brighter than Jupiter – approximately ten days before recovery. The discussion centers on confirming these sightings and awaiting identification information.",
@@ -511,6 +515,7 @@ window.AGENT1_CORPUS = [
     id: "GEMINI 7 / DEC 1965",
     ref: "255 t 763 r1b transcripts / p.1",
     family: "NASA GEMINI",
+    place: ["Houston", "Texas", 29.76, -95.37],
     src: "media/35.jpg",
     summary:
       "This transcript details a Gemini 7 mission communication regarding unidentified objects observed during a flight. Astronauts reported a “bogey” at ten o’clock, debris, and hundreds of particles moving at approximately three to four miles, eventually entering polar orbit. The discussion also included a booster sighting and a brown bogey, referencing a P.A.O. (possibly a facility) and occurring roughly four hours and 24 minutes into the flight.",
@@ -593,6 +598,7 @@ window.AGENT1_CORPUS = [
     id: "FIVE CONTACTS / 22 MAY 2022",
     ref: "dow uap d10 mission report middle east may 2022 / p.6",
     family: "USG UAP REPORTS",
+    place: ["Al Asad", "Iraq", 33.78, 42.44],
     src: "media/41.jpg",
     summary:
       "This document, declassified by MG Richard A. Harrison on October 7, 2025, details an observation of unidentified aerial phenomena (UAPs) on May 22, 2022, at 061514:00Z.  Weather conditions – specifically dust – hampered visual collection efforts.  Five UAPs were observed flying across a screen, with one exhibiting characteristics resembling a missile.  The observation occurred near coordinates 38SMC531.4a961.4a, and the report, identified as USCENTCOM MDR 25-0093, indicates a satisfactory pre-coordinated effort to fill an intelligence gap.",
@@ -606,6 +612,7 @@ window.AGENT1_CORPUS = [
     id: "FL600 CLUSTER / 31 MAR 2023",
     ref: "dow uap d20 mission report iraq 2023 / p.6",
     family: "USG UAP REPORTS",
+    place: ["Prince Sultan Air Base", "Saudi Arabia", 24.06, 47.58],
     src: "media/42.jpg",
     summary:
       "This document, declassified on October 8, 2025, details an observation of unidentified aerial phenomena (UAP) by a 1.4a/1.4g flight (1.4a, 1.4g). Initial contact occurred on March 31, 2023, with potentially 10-20 UAPs sighted maneuvering near RLZ at an estimated altitude of FL600+.  The flight used a targeting pod to observe the objects, noting differences in comparison to star observations, and reporting no discernible effects on personnel.  The document references FOIA exemptions and various analytical codes and dates.",
@@ -619,6 +626,7 @@ window.AGENT1_CORPUS = [
     id: "SPHERE ON A POLE / 07 JUN 2024",
     ref: "dow uap d27 mission report united arab emirates october 2023 / p.7",
     family: "USG UAP REPORTS",
+    place: ["Al Dhafra", "United Arab Emirates", 24.25, 54.55],
     src: "media/43.jpg",
     summary:
       "This declassified document, dated October 24, 2025, details an Unidentified Aerial Phenomenon (UAP) event observed on June 7, 2024 (070457:00Z).  The UAP, described as a glowing, spherical object with a cylindrical pole, was tracked moving at 140 knots and observed during a routine transit over 40RFM6@(11). Intelligence suggests a “no” response to interrogation and focuses on providing scan support for detecting dhows near SP, requesting specific situational reports regarding vessels, equipment, and personnel.",
@@ -646,6 +654,7 @@ window.AGENT1_CORPUS = [
     id: "WESTERN U.S. / 2026",
     ref: "western us event slides 5 08 2026 / p.2",
     family: "USPER EVENT SLIDES",
+    place: ["Dugway Proving Ground", "Utah", 40.17, -112.93],
     src: "media/45.jpg",
     summary:
       "This page details a reported unidentified aerial phenomenon (UAP) witnessed by two USPER law enforcement agents in the Western U.S. during dusk. Witnesses described a glowing orange orb, initially estimated as 500-600 meters distant and roughly the size of a small helicopter cockpit, near a rock pinnacle.  Later analysis by the AARO suggests a diameter of 12-18 meters and a distance of approximately 1050 meters. The object was noted for its apparent hovering behavior and lack of sound.",
@@ -659,6 +668,7 @@ window.AGENT1_CORPUS = [
     id: "DARK KITE / 2026",
     ref: "western us event slides 5 08 2026 / p.3",
     family: "USPER EVENT SLIDES",
+    place: ["Dugway Proving Ground", "Utah", 40.17, -112.93],
     src: "media/46.jpg",
     summary:
       "This document details an unusual observation made by two federal law enforcement agents in the pre-dawn hours in the Western U.S.  USPER5 and USPER6 reported seeing a “car” with red and white lights approximately two to three feet off the ground, which then moved laterally at 15-20 mph with unusual “zero resistance.”  Using night vision goggles, USPER6 initially described it as a “thin line,” while USPER5 likened it to a dark kite.  Later, AARO described the object as triangular, suggesting a potential investigation by the Advanced Aerospace Threat Identification Program (AARO).",
@@ -672,6 +682,7 @@ window.AGENT1_CORPUS = [
     id: "ORB SWARM / 2025",
     ref: "usper statement redacted / p.2",
     family: "USPER STATEMENTS",
+    place: ["Dugway Proving Ground", "Utah", 40.17, -112.93],
     src: "media/47.jpg",
     summary:
       "This document details a military training mission on [Date - 2207 hours] involving aircraft [CALL SIGN 1] investigating an unidentified “orb.”  Pilots and a witness observed a rapidly expanding swarm of orange orbs – initially near [CALL SIGN 1] at [COORDINATES], then over [ROAD NAME] and finally near [SITE CODE NAME] and [NEARBY TOWN NAME].  The orbs flared up and down in sequence, with a total of five observed, and were accompanied by a second group of orbs seen near the [MILITARY AIRCRAFT] en route to assist.",
@@ -685,6 +696,7 @@ window.AGENT1_CORPUS = [
     id: "CIGAR OVER THE RANGE / SEP 2023",
     ref: "serial 3 redacted / p.2",
     family: "FBI",
+    place: ["Dugway Proving Ground", "Utah", 40.17, -112.93],
     src: "media/48.jpg",
     summary:
       "This page details a UAP observation from September 2023, recorded as part of FD-302. An agent reported seeing a cigar-shaped, metallic bronze object emitting an intense, diamond-white light approximately 500-3000 feet above the tree line. The object, described as being roughly the length of two Blackhawk helicopters, moved slowly from east to west and then vanished without a trace, leaving no contrails. The observer initially dismissed it as a test disruption but later recognized it as something unusual, prompting skepticism from colleagues.",
@@ -783,6 +795,7 @@ window.AGENT1_CORPUS = [
     id: "SENATOR RUSSELL / 13 OCT 1947",
     ref: "341 110677 numerical file 5 2500 / p.4",
     family: "AIR INTELLIGENCE",
+    place: ["Baku", "Azerbaijan", 40.41, 49.87],
     src: "media/55.jpg",
     summary:
       "This page details a debriefing following an observation of unidentified flying objects (UFOs) by Senator Russell and Mr. Efron on October 13, 1947, aboard a train traveling through the Middle East. Colonel Hathaway, an Air Force Attaché, led the discussion with Mr. Efron’s detailed notes. Witnesses reported seeing two saucer-shaped aircraft ascending vertically from a train, with one taking off from the south side of the track. The event prompted Soviet trainmen to close curtains, suggesting the passengers had witnessed something classified. Raw notes and additional comments are included, describing the objects’ movements and characteristics, including sparking and a slow, clockwise rotation.  The document carries a high security classification and emphasizes the",
@@ -867,4 +880,5 @@ window.AGENT1_CORPUS = [
   },
 
 ];
+
 

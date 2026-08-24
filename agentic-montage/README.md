@@ -54,8 +54,8 @@ After the shuffle, a second pass walks the bag and swaps any page that landed
 within `MIN_APART` degrees of the one before it further down the order, so the
 reticle keeps crossing the world instead of lingering in one region. Over two
 thousand passes of the current corpus that takes neighbours closer than 25° from
-10.5% of hops down to 0.2%, with no page ever repeating back to back and every
-one of the sixty opening the piece at some point. The mean hop is 204°.
+21.8% of hops down to 0.7%, with no page ever repeating back to back and every
+one of the sixty opening the piece at some point. The mean hop is 109°.
 
 The bag is re-cut about every ten minutes and the spread pass is a few hundred
 comparisons, so none of this shows up in a frame budget.
@@ -89,8 +89,12 @@ so it holds still while the subtitle grows and shrinks underneath it.
 
 `place` is `[name, region, lat, lon]` and comes from the page itself — the town
 in the sighting, the sea the mission flew over, the embassy the cable left from.
-An entry with no `place` reads UNLOCATED rather than pointing somewhere
-invented.
+Every page in the current corpus carries one: a transcript or report whose
+subject has no location — a space mission, a redacted test range — is pinned to
+where it originated, Houston for the NASA crew debriefings, the base a mission
+report flew from, the facility the redacted FBI and USPER reports point to. An
+entry with no `place` would read UNLOCATED rather than pointing somewhere
+invented, and the locator never guesses.
 
 The outline is Natural Earth 1:110m land (public domain), simplified to one
 11 kB path, clipped to 84°N–58°S. It is drawn once and never redrawn; only the
