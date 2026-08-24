@@ -11,8 +11,10 @@ Live at `/sites/agentic-montage/`.
 
 Pages from the USA Government UAP release, chosen across handwritten reports,
 teletype memoranda, newspaper clippings, photostat checklists, incident summary
-sheets and modern mission reports, so the montage keeps changing texture. They
-run from 1947 to 2024 and from Perth to Kodiak.
+sheets, NASA crew transcripts, FBI interviews and modern mission reports, so the
+montage keeps changing texture. They run from a 1945 "foo fighter" over the
+Franco-German border to the Western U.S. orb events of 2026, and from Perth to
+Kodiak and out to lunar orbit.
 
 - `corpus.js` is the manifest — the only file you edit to change the piece.
 - `media/01.jpg` … are the pages.
@@ -52,8 +54,8 @@ After the shuffle, a second pass walks the bag and swaps any page that landed
 within `MIN_APART` degrees of the one before it further down the order, so the
 reticle keeps crossing the world instead of lingering in one region. Over two
 thousand passes of the current corpus that takes neighbours closer than 25° from
-14.7% of hops down to 0.7%, with no page ever repeating back to back and every
-one of the thirty opening the piece at some point. The mean hop is 107°.
+10.5% of hops down to 0.2%, with no page ever repeating back to back and every
+one of the sixty opening the piece at some point. The mean hop is 204°.
 
 The bag is re-cut about every ten minutes and the spread pass is a few hundred
 comparisons, so none of this shows up in a frame budget.
@@ -69,11 +71,18 @@ the document changes the reticle flies to the new position and a hairline traces
 the hop it just made, so a viewer who looks up mid-piece can see where the
 montage has got to.
 
+Under the map itself a caption names the document family the page on screen
+belongs to — `FBI HQ FILE`, `NASA APOLLO`, `USG UAP REPORTS`, … — so a viewer
+can tell at a glance whether the agent is reading a 1947 memorandum or a 2023
+mission report.
+
 The date is taken off the end of the same `id` the footer prints, rather than
 stored twice, so the locator and the bar can never disagree about which page is
-on screen. All four lines are the same white: the hierarchy is size and
-tracking, which survives a pale scan drifting underneath better than a grey
-would.
+on screen. Two OCR-read dates are known to be wrong; a tiny curated table in
+`index.js`, keyed by page, corrects them at load — the summaries stay verbatim
+and the two readouts still can't disagree. All four lines are the same white:
+the hierarchy is size and tracking, which survives a pale scan drifting
+underneath better than a grey would.
 
 It is anchored to the top of the frame rather than stacked above the subtitle,
 so it holds still while the subtitle grows and shrinks underneath it.
@@ -99,7 +108,7 @@ From the release scans:
 4. Autocontrast, cutoff 0.5.
 5. Fit inside 1100 × 1320 and save as progressive JPEG, quality 80.
 
-That is about 195 kB a page. Only the page on screen and the one after it are
+That is about 180 kB a page. Only the page on screen and the one after it are
 ever fetched, so the montage costs one image per twenty seconds however long the
 corpus grows.
 

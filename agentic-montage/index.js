@@ -21,6 +21,26 @@ var CORPUS = (window.AGENT1_CORPUS && window.AGENT1_CORPUS.length)
 var TOTAL = CORPUS.length;
 var HAS_AUDIO = CORPUS.some(function (d) { return !!d.audio; });
 
+/* ---- curated date fixes -------------------------------------------------------
+   Two OCR-read dates are wrong (a 1957 for the June 1947 Mount Rainier
+   sighting, a 1934 for the July 1947 Alta, Utah sighting). The summaries stay
+   verbatim; only the date shown is corrected, keyed by page so a fix is one
+   line. Applied to the id at load, so the footer and the locator can never
+   disagree about which page is on screen.
+--------------------------------------------------------------------------------- */
+var DATE_FIXES = {
+  "media/53.jpg": "24 JUN 1947",   /* the nine aircraft against Mount Rainier */
+  "media/56.jpg": "17 JUL 1947"    /* the disc near Alta, Utah */
+};
+(function () {
+  for (var i = 0; i < CORPUS.length; i++) {
+    var d = CORPUS[i], fix = d.src && DATE_FIXES[d.src];
+    if (!fix || !d.id) continue;
+    var parts = String(d.id).split(" / ");
+    if (parts.length > 1) { parts[parts.length - 1] = fix; d.id = parts.join(" / "); }
+  }
+})();
+
 /* ------------------------------------------------------------------ *
  * 1. stand-in scans, generated when an entry has no src.
  *    Seeded by slot, so every loop looks identical.
@@ -157,6 +177,7 @@ var placeEl = document.getElementById("wplace");
 var regionEl = document.getElementById("wregion");
 var coordEl = document.getElementById("wcoord");
 var dateEl = document.getElementById("wdate");
+var famEl = document.getElementById("wfamily");
 var lastPt = null;
 
 (function drawWorld() {
@@ -382,6 +403,7 @@ function enterDocument() {
   activeLine = -1;
   docFallback = false;
   docIdEl.textContent = seq.item.id || "—";
+  famEl.textContent = seq.item.family || "\u00a0";
   flyTo(seq.item.place, seq.item.id);
   /* the plate arrives with the first line, in renderLine */
   var nxt = CORPUS[bag[0]];

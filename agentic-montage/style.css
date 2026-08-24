@@ -97,6 +97,13 @@ body.idle { cursor: none; }
 /* the same string the footer carries, so the two read as one record */
 #wdate { margin-top: 3px; font-size: 8.5px; letter-spacing: .22em; text-transform: uppercase; }
 
+/* the document family of the page on screen, captioned under the map itself —
+   FBI HQ FILE, NASA APOLLO, USG UAP REPORTS, … — same white, same tracking */
+#wfamily { margin-top: 5px; padding-top: 4px; border-top: 1px solid #2c2c2c;
+           font-size: 8px; letter-spacing: .22em; text-transform: uppercase;
+           color: #e8e8e8; text-align: center; white-space: nowrap;
+           overflow: hidden; text-overflow: ellipsis; }
+
 /* ---- layer 4b : the subtitle ---- */
 #caption { position: absolute; left: 8vw; right: 34vw; top: 50%; transform: translateY(-50%);
            contain: layout paint; }
@@ -184,6 +191,7 @@ body.halted #pin .halo { animation-play-state: paused; }
   #wplace { font-size: 9px; letter-spacing: .12em; white-space: normal; line-height: 1.3; }
   #wregion, #wdate { font-size: 7.5px; letter-spacing: .16em; }
   #wcoord { font-size: 7.5px; }
+  #wfamily { font-size: 7px; letter-spacing: .16em; }
   #caption { left: 6vw; right: 6vw; top: auto; bottom: 20%; transform: none; }
   #sub {
     font-size: clamp(19px, 5.6vw, 34px); line-height: 1.12;
