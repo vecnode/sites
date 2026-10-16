@@ -5,11 +5,11 @@
   "engineVersion": "0.1.3",
   "gameId": "top1000",
   "gameVersion": "0.2.0",
-  "contentHash": "28726152d64b15af",
+  "contentHash": "64da6ce6b559cdab",
   "catalog": {
     "file": "catalog-local/top1000.v1.json",
-    "sha256BeforeStrip": "c03d5b7c66eb4ebe10d279109238752ae54611104f8eb9c7f962e67ae2335ba0",
-    "sha256Published": "fcdf9abadac46ae9734521f7bb16ba71a9d665079b3d0ed9a38038a36ad90ea1",
+    "sha256BeforeStrip": "93b0a1871aa511b0beda127a5a1df8c79556806e946a5a9090a1b73360cb2b85",
+    "sha256Published": "c1e3d7dcfbb0e9dd29f94b35fb896ad3a31e95cb06ad37226fda1f03eba16af2",
     "items": 1000,
     "questions": 10
   },
@@ -21,9 +21,9 @@
   },
   "revision": "f3d7a1da267e",
   "sizes": {
-    "catalogPlain": 324424,
-    "catalogGzipped": 58350,
-    "envelope": 77898
+    "catalogPlain": 314024,
+    "catalogGzipped": 55689,
+    "envelope": 74350
   },
   "files": {
     "api.js": "c2a9833b8407e9bf3dce499a974f4bda55bc46e2fdd38e328218f215e40c8728",
