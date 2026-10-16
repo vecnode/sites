@@ -1,0 +1,60 @@
+{
+  "generatedBy": "tools/deploy.mjs in vecnode/nobrinde-recomgame",
+  "builtOn": "2026-10-16",
+  "sourceCommit": "c8383ba",
+  "engineVersion": "0.1.3",
+  "gameId": "top1000",
+  "gameVersion": "0.1.0",
+  "contentHash": "3e8690208f2b6809",
+  "catalog": {
+    "file": "catalog-local/top1000.v1.json",
+    "sha256BeforeStrip": "8731765c698505ab5c286139935cca19d3a37a82d6686f5e94fd48af44abb38f",
+    "sha256Published": "da748ddd5e905533a6081bb5d80f84c7f41ad468b24b8cc68b233dbf50c76292",
+    "items": 1000,
+    "questions": 5
+  },
+  "stripped": {
+    "items": 1000,
+    "summaries": 1000,
+    "bullets": 1000,
+    "fields": 1000
+  },
+  "revision": "ba62ff790da8",
+  "sizes": {
+    "catalogPlain": 276029,
+    "catalogGzipped": 47043,
+    "envelope": 62822
+  },
+  "files": {
+    "api.js": "c2a9833b8407e9bf3dce499a974f4bda55bc46e2fdd38e328218f215e40c8728",
+    "core/audit.js": "662e6db22341e1222e3e5c374ae76dd4bef59602fbc1ff4fc3102b7713de0161",
+    "core/catalog.js": "c06b25cbae417ea1c703f88ad308c58f75258af2b5f5b135f8bd3f8bdf0ba2f9",
+    "core/csv.js": "0eb60aab62126208b72b33f50c56dc5203be29f5f9c91489f1a08a92654c09dc",
+    "core/explain.js": "0f0b1708b556e644e4e0b262b62d1cc542c07e806618d3780857466029b621ce",
+    "core/freeze.js": "38b1975727b488fd1625ce0d1e835ef422bd8f32b2d30dda8df3c20f9887938a",
+    "core/hash.js": "92f9ad1eda82cb3ccef70edca7bc83fff4f932eed4ba8c4a993638357f1da24a",
+    "core/i18n.js": "68a84d84e869277b057e44e6851b9a9cd5d1f3b1db05f90c2e15c76f708641b8",
+    "core/index.js": "eb1c8086827e0ff5aee978ec2fc2f379523e7fafb1ed328ed3f1f05522c8e3f2",
+    "core/model.js": "27fcce727f86a3f6b16402ed3359b0c29892fd1a3c20236fb507f81020a57dd2",
+    "core/prng.js": "02be05d47f4de3cda424200930733aeb67451702be07cd5ab60d25283e20e30e",
+    "core/scoring.js": "2360411691769a7bfea69f1b499e9c77a9f62fcb854596333a5239dd26549c4e",
+    "core/session.js": "7288d0a72c601ae4588347440c63d12397951fcc8de29bfb57bb5e73359f4939",
+    "core/validate.js": "6ae4904f558c77cbdbdcedc20c863ba92cca3073397af259da043d260edfafbc",
+    "core/version.js": "2952756b0d43adf3193dcd7b99c5f58972692e0490e473737a228a97410e3929",
+    "embed.js": "1b048457d1c10756c49407764624c2048c7a450b320b5b2b5fa11e4f41a14031",
+    "ui/a11y.js": "437b414ec614291fd4da39fbbc5729107f9c0c5edd15baf61f099b839ad31a34",
+    "ui/canvas.js": "bc2296b5a79c16e3af8afa24488784ef68bec59da1ff21ab89dd52866dc61f3f",
+    "ui/controller.js": "dc6f1ea0c6bb133dddcec4249db06054dd089a385bae48f96135e258da7bf362",
+    "ui/mode.js": "461f84337cd1c9f41ff4f0c296be5e5fbb395086092b790729625c8eaec86a39",
+    "ui/question-view.js": "b757569d6255fc6347fda124c92d725938844014eabd7af406eba12f9e1d502a",
+    "ui/recom-game.js": "8934520d093e3da3cd4a95d7f9d934c4e35088fbeaefb26007923f97b222af9d",
+    "ui/result-view.js": "ea66778d38a0e79e137cb7dcd9b33c5d15e46f4688100ad78a8555bb522fce9c",
+    "ui/shell.css.js": "a9ae14f0d4b633b70bc108b5395c3b4064828dbf2d2201a3bf1a00e6f1f57555",
+    "ui/theme.css.js": "e2b0e6892126d60a9ffde56113570f0e7db9c603276842e5b38e590e878950d5",
+    "ui/tokens.js": "739d9a511fd89b1301c3e31f34ea032d56d85cd3184df581d60359a4ad89e533",
+    "util/assert.js": "11386809ea15558e82a4d7d613a74e2535a55b33c549167bf68c7e0bea97b5b9",
+    "util/dom.js": "4826aab76049c23eb61c9497e03b4681fb1943ef5aabb200ea7683149d3c359e",
+    "util/events.js": "fec6418b903df8fa1b1870d07eddb887ca0df99f83a23c9a12d731c0412d50a4",
+    "util/harness.js": "c82fabb9705b0a6300784f6a65bdc34328e58efa67b549b0a51e3f6e5cf42b7a"
+  }
+}
