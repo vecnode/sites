@@ -46,7 +46,7 @@
 
 <header>
   <h1>Que brinde faz sentido para esta campanha?</h1>
-  <p>Cinco perguntas curtas sobre o que precisa. Cada resposta aproxima-o do brinde certo. <a href="../">vecnode / sites</a></p>
+  <p>Cinco perguntas curtas sobre o que precisa. Cada resposta aproxima-o do brinde certo.</p>
 </header>
 
 <main>
@@ -56,20 +56,31 @@
     <p>Este jogo precisa de JavaScript. Sem ele não há recomendação a calcular — a pontuação corre no seu browser, e é isso que a torna auditável.</p>
   </noscript>
 
-  <recom-game game="top1000" mode="auto">
+  <!--
+    audit="false" is the consumer view: the recommendation, the two closest
+    alternatives and the reasons, and a button to start again. The audit panel —
+    the step log, the in-page re-verification and the raw record — is the same
+    widget's other face, shown on the repository's own pages and available to any
+    host that wants it. The trace is still produced and still verifiable; it is
+    simply not on this page.
+  -->
+  <recom-game game="top1000" mode="auto" audit="false">
     <p>Este jogo precisa de JavaScript. Com ele ligado, cinco perguntas chegam para escolher entre 1000 brindes.</p>
   </recom-game>
 </main>
 
 <footer>
-  <p>
-    Catálogo de 1000 produtos, compilado da exportação de vendas e publicado <!--
-    -->selado: o ficheiro que esta página descarrega está comprimido e cifrado, e não <!--
-    -->traz as referências de fornecedor. Revisão <code>ba62ff790da8</code>, publicada em 2026-10-16.
-  </p>
+  <!--
+    One line, and it keeps the two facts worth keeping: how many products, and
+    which revision of the page. The sentence about the catalogue being sealed used
+    to sit here and was removed on the owner's instruction — it described the
+    implementation to a player who came to choose a gift, and it is the kind of
+    detail that belongs in the repository's documentation instead.
+  -->
+  <p>Catálogo de 1000 produtos. Revisão <code>f3d7a1da267e</code>, publicada em 2026-10-16.</p>
 </footer>
 
-<script type="module" src="./entry.js?v=ba62ff790da8"></script>
+<script type="module" src="./entry.js?v=f3d7a1da267e"></script>
 
 </body>
 </html>

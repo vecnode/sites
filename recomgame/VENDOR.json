@@ -1,7 +1,7 @@
 {
   "generatedBy": "tools/deploy.mjs in vecnode/nobrinde-recomgame",
   "builtOn": "2026-10-16",
-  "sourceCommit": "c8383ba",
+  "sourceCommit": "c8383ba-dirty",
   "engineVersion": "0.1.3",
   "gameId": "top1000",
   "gameVersion": "0.1.0",
@@ -19,7 +19,7 @@
     "bullets": 1000,
     "fields": 1000
   },
-  "revision": "ba62ff790da8",
+  "revision": "f3d7a1da267e",
   "sizes": {
     "catalogPlain": 276029,
     "catalogGzipped": 47043,
@@ -49,7 +49,7 @@
     "ui/question-view.js": "b757569d6255fc6347fda124c92d725938844014eabd7af406eba12f9e1d502a",
     "ui/recom-game.js": "8934520d093e3da3cd4a95d7f9d934c4e35088fbeaefb26007923f97b222af9d",
     "ui/result-view.js": "ea66778d38a0e79e137cb7dcd9b33c5d15e46f4688100ad78a8555bb522fce9c",
-    "ui/shell.css.js": "a9ae14f0d4b633b70bc108b5395c3b4064828dbf2d2201a3bf1a00e6f1f57555",
+    "ui/shell.css.js": "6564bfdc1fe407c3aeafea6344009fffbf212de3448f88c6dfd228505abb1bef",
     "ui/theme.css.js": "e2b0e6892126d60a9ffde56113570f0e7db9c603276842e5b38e590e878950d5",
     "ui/tokens.js": "739d9a511fd89b1301c3e31f34ea032d56d85cd3184df581d60359a4ad89e533",
     "util/assert.js": "11386809ea15558e82a4d7d613a74e2535a55b33c549167bf68c7e0bea97b5b9",

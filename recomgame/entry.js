@@ -6,8 +6,8 @@
  * graph expire when the sources change.
  */
 
-import { RecomGame } from './vendor/src/embed.js?v=ba62ff790da8';
-import { boot } from './boot.js?v=ba62ff790da8';
+import { RecomGame } from './vendor/src/embed.js?v=f3d7a1da267e';
+import { boot } from './boot.js?v=f3d7a1da267e';
 
 const stage = document.querySelector('[data-recomgame-stage]');
 const element = document.querySelector('recom-game');
@@ -16,9 +16,9 @@ if (stage && element) {
   element.setAttribute('aria-busy', 'true');
   const started = await boot({
     container: stage,
-    dataUrl: './data/top1000.enc?v=ba62ff790da8',
-    keyUrl: './data/key.json?v=ba62ff790da8',
-    revision: 'ba62ff790da8'
+    dataUrl: './data/top1000.enc?v=f3d7a1da267e',
+    keyUrl: './data/key.json?v=f3d7a1da267e',
+    revision: 'f3d7a1da267e'
   });
   element.setAttribute('data-boot', started ? 'ok' : 'failed');
 }

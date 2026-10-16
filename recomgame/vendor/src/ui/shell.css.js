@@ -298,6 +298,18 @@ dialog::backdrop {
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: thin;
+  /*
+   * Reserve the scrollbar's lane whenever the answers can overflow, so a long
+   * question shows a scrollbar rather than hiding one until the pointer is over
+   * it. On the eleven-option question a reader who cannot see that there is more
+   * below has no reason to try to scroll, and "the card cut the answers" is
+   * exactly what that looks like. Where the property is unsupported it is
+   * ignored, and overflow-y: auto still scrolls.
+   *
+   * No backticks in this comment: the stylesheet is a template literal, and one
+   * here ends it early. That happened twice while this was written.
+   */
+  scrollbar-gutter: stable;
 }
 
 /* The header slot the progress block occupies in portrait. It claims a line of
@@ -314,11 +326,34 @@ dialog::backdrop {
 /* The side column exists only in landscape. */
 .aside { display: none; }
 
+/*
+ * The two-column arrangement, and the row height is load-bearing.
+ *
+ * The row height looks redundant next to align-items: stretch and it is not: the
+ * row of a grid is sized auto by default, which means it grows to fit its
+ * content. With a tall question — the catalogue's eleven-option first question is
+ * the worst case — the row became 1430px inside a 420px shell, the scroller was
+ * stretched to the ROW rather than to the space left in the shell, and the
+ * shell's own overflow: hidden then cut the answers off with no scrollbar and no
+ * way to reach them. Measured, not reasoned: 1430px of scroller in a 420px box,
+ * and it reported canScroll: false.
+ *
+ * A flex container does not do this, because flex: 1 1 auto with min-height: 0 on
+ * the scroller already caps it at the space available. The grid needs the same
+ * ceiling stated, so this line is what makes switching mode leave the answers
+ * reachable. minmax(0, ...) rather than a bare 1fr because 1fr alone still
+ * refuses to shrink below the content's minimum.
+ *
+ * Backticks are avoided in this comment deliberately: this file is a template
+ * literal, and one inside it ends the stylesheet early. tools/preflight.mjs names
+ * that mistake when it happens, which is how this note came to be written.
+ */
 .shell[data-mode="landscape"] .body {
   display: grid;
   grid-template-columns: minmax(0, 30%) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
   gap: 0 18px;
-  align-items: start;
+  align-items: stretch;
 }
 
 /*
