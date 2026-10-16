@@ -1,6 +1,6 @@
 {
   "v": 1,
   "alg": "AES-256-GCM",
-  "key": "ILjcO3DmjUTy/5aYKb3OnLR3ISDPSYnsB2xDeP0uskc=",
+  "key": "S1SyoagYqTVGOUfphN5VQRh6T9dULHOWxa7VKjTR7R0=",
   "note": "A chave que abre data/top1000.enc. Separada do catálogo de propósito: rodar a chave é substituir este ficheiro. Não é um segredo guardado do jogador — o browser tem de a ter para abrir o jogo. Ver tools/deploy.mjs."
 }

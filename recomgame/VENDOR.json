@@ -8,8 +8,8 @@
   "contentHash": "6d0fce0e41929a6b",
   "catalog": {
     "file": "catalog-local/top1000.v1.json",
-    "sha256BeforeStrip": "a976a2e18e3ba958c5e921bac072bee2b65d5efced6b39282a53cc49f096fc80",
-    "sha256Published": "ee7ded7060e4a2f1e63325a6bde5ea29d93054e2b9a9046d13ca7cfabfc83d62",
+    "sha256BeforeStrip": "e506c4c005c14eaf50b4f31029ef85506d3f6ab0569caa0d132d02b41faecad1",
+    "sha256Published": "b97542ad64732fcc5ca1e4f2e821853869fe134301621cefbc2e39be470fafa9",
     "items": 993,
     "questions": 10
   },
@@ -22,8 +22,8 @@
   "revision": "f3d7a1da267e",
   "sizes": {
     "catalogPlain": 358543,
-    "catalogGzipped": 58610,
-    "envelope": 78242
+    "catalogGzipped": 58780,
+    "envelope": 78470
   },
   "files": {
     "api.js": "c2a9833b8407e9bf3dce499a974f4bda55bc46e2fdd38e328218f215e40c8728",
